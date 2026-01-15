@@ -2,16 +2,15 @@ import {
   ArrowDownCircleIcon,
   ArrowUpCircleIcon,
   CurrencyDollarIcon,
-  CalendarIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
 import Tabel from "../components/ul/Tabel";
-import { fetchData } from "./action";
-import BtnTombol from "../components/buttons/BtnTombol";
+import { fetchData, FetchTotal } from "./action";
 import { BtnLink } from "../components/buttons/BtnLink";
 
 export default async function Dashboard() {
   const database = await fetchData();
+  const TotalAll = await FetchTotal();
   return (
     <div className="min-h-screen  from-gray-50 to-gray-100 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
@@ -24,7 +23,6 @@ export default async function Dashboard() {
             Monitoring arus kas masuk dan keluar organisasi
           </p>
         </div>
-
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Total Pemasukan */}
@@ -37,7 +35,7 @@ export default async function Dashboard() {
                 <p className="text-2xl md:text-3xl font-bold text-gray-800 mt-2"></p>
                 <div className="flex items-center mt-2">
                   <span className="text-green-600 text-sm font-medium">
-                    +12% dari bulan lalu
+                    +12% dari bulan lalu a
                   </span>
                 </div>
               </div>
@@ -72,7 +70,7 @@ export default async function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-gray-500 text-sm font-medium">
-                  Sisa Saldo
+                  Sisa Saldo {TotalAll}
                 </h3>
                 <p className="text-2xl md:text-3xl font-bold text-gray-800 mt-2"></p>
                 <div className="flex items-center mt-2">

@@ -1,10 +1,184 @@
-export default function Edit ({params,}:{params: {id:string}}) {
-    const id = params.id
-    return (
-        
-        <>
-            <h2 className="bg-blue-800 p-2">edit Kawan {id}</h2>
-         </>
-    )
-}
+import {
+  ArrowLeftIcon,
+  CalendarIcon,
+  UserCircleIcon,
+  TagIcon,
+  ArrowsRightLeftIcon,
+} from "@heroicons/react/24/outline";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { AmbilDataId, EditData } from "./action";
 
+// Definisikan tipe props untuk params (Next.js 15 pakai Promise untuk params)
+export default async function EditPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  // 1. Ambil ID dari URL
+  const { id } = await params;
+  const numericId = parseInt(id);
+
+  // 2. Ambil data lama dari database
+  const dataLama = await AmbilDataId(numericId);
+
+  // Jika data tidak ditemukan (misal ID ngawur), lempar ke 404
+  if (!dataLama) {
+    return notFound();
+  }
+
+  // 3. Bind ID ke Server Action supaya action tau ID mana yang diedit
+  const updateDataWithId = EditData.bind(null, numericId);
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      {/* Header */}
+      <div className="sm:mx-auto sm:w-full sm:max-w-md mb-6 px-4">
+        <Link
+          href="/"
+          className="inline-flex items-center text-sm text-gray-500 hover:text-blue-600 mb-4 transition-colors"
+        >
+          <ArrowLeftIcon className="h-4 w-4 mr-1" /> Kembali ke Dashboard
+        </Link>
+        <h2 className="text-2xl font-bold text-gray-900">Edit Transaksi</h2>
+        <p className="text-sm text-gray-600 mt-1">
+          Perbarui data transaksi ID: {id}
+        </p>
+      </div>
+
+      <div className="sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
+        <div className="bg-white py-8 px-6 shadow-lg rounded-2xl border border-gray-100">
+          
+          {/* Masukkan action yang sudah di-bind ke form */}
+          <form action={updateDataWithId} className="space-y-5">
+            
+            {/* 1. Nama */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Nama
+              </label>
+              <div className="relative rounded-md shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <UserCircleIcon className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  name="nama"
+                  required
+                  defaultValue={dataLama.nama} // Isi otomatis data lama
+                  className="block w-full pl-10 py-2.5 sm:text-sm border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                />
+              </div>
+            </div>
+
+            {/* 2. Group: Status & Kategori */}
+            <div className="grid grid-cols-2 gap-4">
+              {/* Status */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Status
+                </label>
+                <div className="relative rounded-md shadow-sm">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <ArrowsRightLeftIcon className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <select
+                    name="tipe"
+                    defaultValue={dataLama.tipe} // Isi otomatis
+                    className="block w-full pl-10 py-2.5 sm:text-sm border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white"
+                  >
+                    <option value="Masuk">Pemasukan</option>
+                    <option value="Keluar">Pengeluaran</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Kategori */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Kategori
+                </label>
+                <div className="relative rounded-md shadow-sm">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <TagIcon className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <select
+                    name="kategori"
+                    required
+                    defaultValue={dataLama.kategori} // Isi otomatis
+                    className="block w-full pl-10 py-2.5 sm:text-sm border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white"
+                  >
+                    <option value="Iuran">Iuran Warga</option>
+                    <option value="Makanan">Makanan</option>
+                    <option value="Transport">Transport</option>
+                    <option value="Belanja">Belanja Alat</option>
+                    <option value="Lainnya">Lainnya</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* 3. Nominal */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Nominal (Rp)
+              </label>
+              <div className="relative rounded-md shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <span className="text-gray-500 font-bold sm:text-sm">Rp</span>
+                </div>
+                <input
+                  type="number"
+                  name="nominal"
+                  required
+                  defaultValue={dataLama.nominal} // Isi otomatis
+                  className="block w-full pl-10 pr-4 py-2.5 sm:text-sm border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 font-medium"
+                />
+              </div>
+            </div>
+
+            {/* 4. Tanggal */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Tanggal
+              </label>
+              <div className="relative rounded-md shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <CalendarIcon className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="date"
+                  name="tanggal"
+                  required
+                  defaultValue={dataLama.tanggal} // Isi otomatis
+                  className="block w-full pl-10 py-2.5 sm:text-sm border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+
+            {/* 5. Keterangan */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Keterangan
+              </label>
+              <textarea
+                name="keterangan"
+                rows={3}
+                defaultValue={dataLama.keterangan} // Isi otomatis
+                className="block w-full p-3 sm:text-sm border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm resize-none"
+              />
+            </div>
+
+            {/* Button Simpan */}
+            <button
+              type="submit"
+              className="bg-blue-500 p-2 rounded-lg w-full text-white font-semibold hover:bg-blue-600 transition-colors shadow-md"
+            >
+              Simpan Perubahan
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
