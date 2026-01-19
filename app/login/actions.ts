@@ -1,7 +1,7 @@
 'use server'
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from "next/cache";
-import { redirect, RedirectType } from "next/navigation";
+import { redirect, } from "next/navigation";
 
 export const Login = async (formData: FormData) => {
   const supabase = await createClient();
