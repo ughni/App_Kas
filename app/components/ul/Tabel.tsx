@@ -20,6 +20,15 @@ interface TypeProps {
   data: HeadType[];
 }
 
+const formatRupiah = (amount: number): string => {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+};
+
 export default function Tabel({ data, headers }: TypeProps) {
   const hendleDelete = async () => {};
 
@@ -45,12 +54,14 @@ export default function Tabel({ data, headers }: TypeProps) {
               <td className="px-4 py-2 text-center text-sm">{item.nama}</td>
               <td className="px-4 py-2 text-center text-sm">{item.kategori}</td>
               <td className="px-4 py-2 text-center text-sm">{item.tipe}</td>
-              <td className="px-4 py-2 text-center text-sm">{item.nominal}</td>
+              <td className="px-4 py-2 text-center text-sm font-medium">
+                {formatRupiah(item.nominal)}
+              </td>
+
               <td className="px-4 py-2 text-center text-sm">
                 {item.keterangan}
               </td>
 
-              {/* Kolom tanggal */}
               <td className="px-4 py-2 text-center">
                 <div className="flex items-center justify-center gap-2">
                   <CalendarDateRangeIcon className="h-4 w-4 text-sm  text-gray-400" />
@@ -58,7 +69,6 @@ export default function Tabel({ data, headers }: TypeProps) {
                 </div>
               </td>
 
-              {/* Kolom aksi */}
               <td className="px-4 py-2 text-center">
                 <div className="flex items-center justify-center gap-3">
                   <BtnLink
@@ -66,7 +76,7 @@ export default function Tabel({ data, headers }: TypeProps) {
                     className="flex items-center text-sm gap-1 text-green-600 hover:text-green-800 transition-colors"
                     icon={<PencilSquareIcon className="h-5 w-5" />}
                   />
-                  <TombolHps id={item.id}/>
+                  <TombolHps id={item.id} />
                 </div>
               </td>
             </tr>
