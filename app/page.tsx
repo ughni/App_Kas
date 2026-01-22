@@ -1,8 +1,11 @@
 
 import Dashboard from "./wishlist/page";
+interface HomeProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+export default async function Home(props: HomeProps) {
+  return(
 
-export default async function Home() {
-
-
-  return <Dashboard />;
+    <Dashboard searchParams={props.searchParams} />
+  )
 }
